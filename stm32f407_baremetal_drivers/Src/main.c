@@ -16,68 +16,67 @@
  ******************************************************************************
  */
 
-#include <stdint.h>
+#include <stdint.h>   // Standard integer types (uint8_t, uint32_t, etc.)
+#include "gpio.h"     // Your custom GPIO driver for LED control
 
+// Compile-time check:
+// If FPU instructions are enabled but FPU is not initialized, warn developer
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-typedef struct
-{
-	volatile uint32_t DUMMY[12];
-	volatile uint32_t AHB1ENR;
-} RCC_Typedef;
-
-typedef struct
-{
-	volatile uint32_t MODER;
-	volatile uint32_t OTYPER;
-	volatile uint32_t OSPEEDR;
-	volatile uint32_t PUPDR;
-	volatile uint32_t IDR;
-	volatile uint32_t ODR;
-	volatile uint32_t BSRR;
-	volatile uint32_t LCKRR;
-	volatile uint32_t AFRL;
-	volatile uint32_t AFRH;
-} GPIO_Typedef;
-
-#define RCC_BASE 	0x40023800UL
-#define GPIOD_BASE 	0x40020C00UL
-#define RCC ((RCC_Typedef *) RCC_BASE)
-#define GPIOD	((GPIO_Typedef *) GPIOD_BASE)
-
-
-
 int main(void)
 {
-	/* Enable the clock for GPIOD */
-	RCC->AHB1ENR |= (1 << 3U);
+	// Flag to control LED state (0 = OFF sequence, 1 = ON sequence)
+	uint8_t allLedOn = 0;
 
-	/* Output mode configuration for PD12, PD13, PD14, PD15 */
-	GPIOD->MODER &= ~(1 << 25U);
-	GPIOD->MODER |= (1 << 24U);
-	GPIOD->MODER &= ~(1 << 27U);
-	GPIOD->MODER |= (1 << 26U);
-	GPIOD->MODER &= ~(1 << 29U);
-	GPIOD->MODER |= (1 << 28U);
-	GPIOD->MODER &= ~(1 << 31U);
-	GPIOD->MODER |= (1 << 30U);
+	// Initialize GPIO pins for LEDs (PD12–PD15)
+	led_init();
 
-	/* Set PD12, PD13, PD14, PD15 to high */
-	GPIOD->ODR |= (1 << 12U);
-	GPIOD->ODR |= (1 << 13U);
-	GPIOD->ODR |= (1 << 14U);
-	GPIOD->ODR |= (1 << 15U);
-    /* Loop forever */
-	for(;;) {
-		GPIOD->ODR ^= (1 << 12U);
-		for(uint32_t delay = 0; delay < 1000000; delay++);
-		GPIOD->ODR ^= (1 << 13U);
-		for(uint32_t delay = 0; delay < 1000000; delay++);
-		GPIOD->ODR ^= (1 << 14U);
-		for(uint32_t delay = 0; delay < 1000000; delay++);
-		GPIOD->ODR ^= (1 << 15U);
-		for(uint32_t delay = 0; delay < 1000000; delay++);
+	// Turn ON all LEDs initially
+	green_led_on();
+	orange_led_on();
+	red_led_on();
+	blue_led_on();
+
+    /* Infinite loop (typical in embedded systems) */
+	for(;;)
+	{
+		if(allLedOn)
+		{
+			// Sequentially turn ON LEDs with delay
+
+			green_led_on();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++); // crude delay loop
+
+			orange_led_on();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+
+			red_led_on();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+
+			blue_led_on();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+		}
+		else
+		{
+			// Sequentially turn OFF LEDs with delay
+
+			green_led_off();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+
+			orange_led_off();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+
+			red_led_off();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+
+			blue_led_off();
+			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+		}
+
+		// Toggle state:
+		// XOR with 1 flips between 0 and 1
+		allLedOn ^= 1;
 	}
 }

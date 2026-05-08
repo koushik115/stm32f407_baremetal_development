@@ -1,1 +1,9 @@
-../Src/gpio.c:9:6:led_init	4	static
+../Src/gpio.c:14:6:led_init	4	static
+../Src/gpio.c:47:6:green_led_on	4	static
+../Src/gpio.c:58:6:orange_led_on	4	static
+../Src/gpio.c:66:6:red_led_on	4	static
+../Src/gpio.c:74:6:blue_led_on	4	static
+../Src/gpio.c:83:6:green_led_off	4	static
+../Src/gpio.c:92:6:orange_led_off	4	static
+../Src/gpio.c:100:6:red_led_off	4	static
+../Src/gpio.c:108:6:blue_led_off	4	static
