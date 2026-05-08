@@ -22,51 +22,62 @@
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-#define PERIPHERAL_BASE		0x40000000UL
-#define AHB1PERIPH_OFFSET 	0x00020000UL
-#define AHB1PERIPH_BASE 	(PERIPHERAL_BASE + AHB1PERIPH_OFFSET)
-#define RCC_OFFSET			0x00003800UL
-#define RCC_BASE			(AHB1PERIPH_BASE + RCC_OFFSET)
-#define RCC_AHB1ENR_OFFSET  0x30UL
-#define RCC_AHB1EN_R		(*(volatile uint32_t *)(RCC_BASE + RCC_AHB1ENR_OFFSET))
-#define GPIOD_OFFSET		0x00000C00UL
-#define GPIOD_BASE			(AHB1PERIPH_BASE + GPIOD_OFFSET)
-#define GPIOD_MODER_OFFSET	0x00UL
-#define GPIOD_MODE_R		(*(volatile uint32_t *)(GPIOD_BASE + GPIOD_MODER_OFFSET))
-#define GPIOD_ODR_OFFSET	0x14UL
-#define GPIOD_OD_R			(*(volatile uint32_t *)(GPIOD_BASE + GPIOD_ODR_OFFSET))
+typedef struct
+{
+	volatile uint32_t DUMMY[12];
+	volatile uint32_t AHB1ENR;
+} RCC_Typedef;
+
+typedef struct
+{
+	volatile uint32_t MODER;
+	volatile uint32_t OTYPER;
+	volatile uint32_t OSPEEDR;
+	volatile uint32_t PUPDR;
+	volatile uint32_t IDR;
+	volatile uint32_t ODR;
+	volatile uint32_t BSRR;
+	volatile uint32_t LCKRR;
+	volatile uint32_t AFRL;
+	volatile uint32_t AFRH;
+} GPIO_Typedef;
+
+#define RCC_BASE 	0x40023800UL
+#define GPIOD_BASE 	0x40020C00UL
+#define RCC ((RCC_Typedef *) RCC_BASE)
+#define GPIOD	((GPIO_Typedef *) GPIOD_BASE)
 
 
 
 int main(void)
 {
 	/* Enable the clock for GPIOD */
-	RCC_AHB1EN_R |= (1 << 3U);
+	RCC->AHB1ENR |= (1 << 3U);
 
 	/* Output mode configuration for PD12, PD13, PD14, PD15 */
-	GPIOD_MODE_R |= (1 << 24U);
-	GPIOD_MODE_R &= ~(1 << 25U);
-	GPIOD_MODE_R |= (1 << 26U);
-	GPIOD_MODE_R &= ~(1 << 27U);
-	GPIOD_MODE_R |= (1 << 28U);
-	GPIOD_MODE_R &= ~(1 << 29U);
-	GPIOD_MODE_R |= (1 << 30U);
-	GPIOD_MODE_R &= ~(1 << 31U);
+	GPIOD->MODER &= ~(1 << 25U);
+	GPIOD->MODER |= (1 << 24U);
+	GPIOD->MODER &= ~(1 << 27U);
+	GPIOD->MODER |= (1 << 26U);
+	GPIOD->MODER &= ~(1 << 29U);
+	GPIOD->MODER |= (1 << 28U);
+	GPIOD->MODER &= ~(1 << 31U);
+	GPIOD->MODER |= (1 << 30U);
 
 	/* Set PD12, PD13, PD14, PD15 to high */
-	GPIOD_OD_R |= (1 << 12U);
-	GPIOD_OD_R |= (1 << 13U);
-	GPIOD_OD_R |= (1 << 14U);
-	GPIOD_OD_R |= (1 << 15U);
+	GPIOD->ODR |= (1 << 12U);
+	GPIOD->ODR |= (1 << 13U);
+	GPIOD->ODR |= (1 << 14U);
+	GPIOD->ODR |= (1 << 15U);
     /* Loop forever */
 	for(;;) {
-		GPIOD_OD_R ^= (1 << 12U);
+		GPIOD->ODR ^= (1 << 12U);
 		for(uint32_t delay = 0; delay < 1000000; delay++);
-		GPIOD_OD_R ^= (1 << 13U);
+		GPIOD->ODR ^= (1 << 13U);
 		for(uint32_t delay = 0; delay < 1000000; delay++);
-		GPIOD_OD_R ^= (1 << 14U);
+		GPIOD->ODR ^= (1 << 14U);
 		for(uint32_t delay = 0; delay < 1000000; delay++);
-		GPIOD_OD_R ^= (1 << 15U);
+		GPIOD->ODR ^= (1 << 15U);
 		for(uint32_t delay = 0; delay < 1000000; delay++);
 	}
 }
