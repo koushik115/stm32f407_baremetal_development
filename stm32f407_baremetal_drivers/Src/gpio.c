@@ -40,7 +40,22 @@ void led_init(void)
 
 }
 
+/**
+ * @brief Initialize user button (PA0)
+ */
+void button_init(void)
+{
+	// Enable clock for GPIOA
+	RCC->AHB1ENR |= GPIOAEN;
 
+	// Configure PA0 as INPUT mode
+	GPIOA->MODER &= ~(1U << 0U);   // Clear bit 0
+	GPIOA->MODER &= ~(1U << 1U);   // Clear bit 1
+
+	// NOTE:
+	// On STM32F407 Discovery board:
+	// - USER button is connected to PA0
+}
 /**
  * @brief Turn ON Green LED (PD12)
  */
@@ -108,4 +123,18 @@ void red_led_off(void)
 void blue_led_off(void)
 {
 	GPIOD->BSRR |= BLUE_LED_RESET;
+}
+
+/**
+ * @brief Read user button state
+ * @return 1 if pressed, 0 if not pressed
+ */
+uint8_t read_button_input(void)
+{
+	// Read Input Data Register (IDR)
+	// Each bit corresponds to one GPIO pin state
+	uint32_t GPIOA_PORT_VALUE = GPIOA->IDR;
+
+	// Mask only PA0 bit and return its state
+	return (GPIOA_PORT_VALUE & USER_BUTTON_PIN) ? 1U : 0U;
 }
