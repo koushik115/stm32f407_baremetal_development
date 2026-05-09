@@ -7,6 +7,10 @@
 
 #include <stdint.h>   // Fixed-width integer types
 #include "gpio.h"     // Custom GPIO driver (LED + button control)
+#include "systick.h"
+
+// Delay for LED
+#define LED_DELAY	500U
 
 // Warn if FPU is enabled in compiler but not initialized in runtime
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
@@ -30,32 +34,33 @@ int main(void)
 			// Button pressed → Turn ON LEDs sequentially
 
 			green_led_on();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++); // crude blocking delay
+			//for(volatile uint32_t delay = 0; delay < 1000000; delay++); // crude blocking delay
+			systick_ms_delay(LED_DELAY);
 
 			orange_led_on();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+			systick_ms_delay(LED_DELAY);
 
 			red_led_on();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+			systick_ms_delay(LED_DELAY);
 
 			blue_led_on();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+			systick_ms_delay(LED_DELAY);
 		}
 		else
 		{
 			// Button not pressed → Turn OFF LEDs sequentially
 
 			green_led_off();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+			systick_ms_delay(LED_DELAY);
 
 			orange_led_off();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+			systick_ms_delay(LED_DELAY);
 
 			red_led_off();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+			systick_ms_delay(LED_DELAY);
 
 			blue_led_off();
-			for(volatile uint32_t delay = 0; delay < 1000000; delay++);
+			systick_ms_delay(LED_DELAY);
 		}
 	}
 }
