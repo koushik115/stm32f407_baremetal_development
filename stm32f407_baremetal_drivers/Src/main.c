@@ -6,9 +6,11 @@
  */
 
 #include <stdint.h>   // Fixed-width integer types
+#include <stdio.h>	  // Standard I/O
 #include "gpio.h"     // Custom GPIO driver (LED + button control)
 #include "systick.h"  // SysTick-based delay (currently not used)
 #include "timer.h"    // TIM2 driver
+#include "uart.h"	  // UART driver
 
 // Delay for LED (used previously with SysTick)
 #define LED_DELAY	500U
@@ -33,6 +35,9 @@ int main(void)
 	// ARR = 1000 → defines period
 	// Combined → generates periodic update event (used as delay)
 	tim2_enable(16000U, 1000U);
+
+	// Initialize the UART
+	uart_init();
 
     /* Infinite loop (bare-metal super loop) */
 	for(;;)
@@ -69,6 +74,9 @@ int main(void)
 			// Wait for next timer event
 			while(!tim2_uev());
 			tim2_clear_uev_flag();
+
+			// Redirect to UART to print the text
+			printf("ALL LED ON\n");
 		}
 		else
 		{
@@ -97,6 +105,9 @@ int main(void)
 			// Wait for timer event
 			while(!tim2_uev());
 			tim2_clear_uev_flag();
+
+			// Redirect to UART to print the text
+			printf("ALL LED OFF\n");
 		}
 	}
 }

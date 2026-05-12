@@ -1,4 +1,6 @@
-Src/main.o: ../Src/main.c ../Inc/gpio.h ../Inc/systick.h ../Inc/timer.h
+Src/main.o: ../Src/main.c ../Inc/gpio.h ../Inc/systick.h ../Inc/timer.h \
+ ../Inc/uart.h
 ../Inc/gpio.h:
 ../Inc/systick.h:
 ../Inc/timer.h:
+../Inc/uart.h:

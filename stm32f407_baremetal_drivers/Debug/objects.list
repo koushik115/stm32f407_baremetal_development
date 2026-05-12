@@ -4,4 +4,5 @@
 "./Src/sysmem.o"
 "./Src/systick.o"
 "./Src/timer.o"
+"./Src/uart.o"
 "./Startup/startup_stm32f407vgtx.o"
