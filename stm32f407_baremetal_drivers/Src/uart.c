@@ -15,7 +15,7 @@ static void uart_set_baudrate(uint32_t periph_clk, uint32_t baudrate);
 static uint32_t compute_buadrate(uint32_t periph_clk, uint32_t baudrate);
 
 // Low-level function to transmit a single character
-static void uart_write(int ch);
+static void uart_write(uint32_t ch);
 
 /**
  * @brief Retargets printf to UART
@@ -93,7 +93,7 @@ static uint32_t compute_buadrate(uint32_t periph_clk, uint32_t baudrate)
  *
  * @param ch Character to transmit
  */
-static void uart_write(int ch)
+static void uart_write(uint32_t ch)
 {
 	// Wait until transmit data register is empty (TXE flag set)
 	while(!(USART2->SR & SR_TXE));

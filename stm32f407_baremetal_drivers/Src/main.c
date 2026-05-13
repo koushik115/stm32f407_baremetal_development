@@ -25,16 +25,16 @@ int main(void)
 	// Initialize peripherals
 
 	// Configure onboard LEDs (e.g., PD12–PD15 as output)
-	led_init();
+//	led_init();
 
 	// Configure user button (e.g., PA0 as input)
-	button_init();
+//	button_init();
 
 	// Initialize TIM2:
 	// Prescaler = 16000 → reduces clock frequency
 	// ARR = 1000 → defines period
 	// Combined → generates periodic update event (used as delay)
-	tim2_enable(16000U, 1000U);
+//	tim2_enable(16000U, 1000U);
 
 	// Initialize the UART
 	uart_init();
@@ -42,7 +42,9 @@ int main(void)
     /* Infinite loop (bare-metal super loop) */
 	for(;;)
 	{
+		printf("Hello from STM32!!\n");
 		// Read button state (PA0)
+		/*
 		uint8_t buttonValue = read_button_input();
 
 		if(buttonValue)
@@ -109,5 +111,6 @@ int main(void)
 			// Redirect to UART to print the text
 			printf("ALL LED OFF\n");
 		}
+		*/
 	}
 }
