@@ -59,11 +59,11 @@ void uart_init(void)
 	// Configure baud rate
 	uart_set_baudrate(APB1_CLCK, DEBUG_UART_BAUDRATE);
 
-	// Enable USART module
-	USART2->CR1 |= CR1_UE;
-
 	// Enable transmitter
 	USART2->CR1 |= CR1_TE;
+
+	// Enable USART module
+	USART2->CR1 |= CR1_UE;
 }
 
 /**
@@ -85,7 +85,7 @@ static void uart_set_baudrate(uint32_t periph_clk, uint32_t baudrate)
  */
 static uint32_t compute_buadrate(uint32_t periph_clk, uint32_t baudrate)
 {
-	return ((periph_clk + (baudrate / 2)) / baudrate);
+	return ((periph_clk + (baudrate / 2U)) / baudrate);
 }
 
 /**
